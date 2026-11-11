@@ -1,0 +1,37 @@
+name: Build Flet APK
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flet
+
+    - name: Build APK for Teacher App
+      run: |
+        flet build apk app_teacher.py --project-name "TeacherApp"
+
+    - name: Build APK for Admin App
+      run: |
+        flet build apk app_admin.py --project-name "AdminApp"
+
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: language-school-apks
+        path: build/apk/*.apk
